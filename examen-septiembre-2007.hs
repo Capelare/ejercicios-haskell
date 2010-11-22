@@ -1,19 +1,19 @@
 {-
 Ejercicio 1
 
-a) ¿Cuál es el tipo polimórfico de 'fun'?
+a) ?Cu?l es el tipo polim?rfico de 'fun'?
 
 	fun f g x = f g x
 
 	fun :: (a -> b -> c) -> a -> b -> c
 
-b) ¿Cuál es el tipo polimórfico de 'fun2'?
+b) ?Cu?l es el tipo polim?rfico de 'fun2'?
 
 	fun2 f g x = f . (g x)
 
 -- TODO
 
-c) ¿Cuál es el tipo polimórfico de 'fun3'?
+c) ?Cu?l es el tipo polim?rfico de 'fun3'?
 
 	fun3 f g x = (f g) . x
 
@@ -36,15 +36,15 @@ type BD = [Producto]
 type Compra = [Codigo]
 type Albaran = [(Unidades, Nombre, PrecioUnitario)]
 
--- definir una función 'mkAlbaran' que, dada una compra en la que pueden 
--- aparecer códigos de productos repetidos en cualquier orden, y una base
--- de datos con las características de cada producto produzca el correspondiente-- albarán.
-
+-- definir una funci?n 'mkAlbaran' que, dada una compra en la que pueden 
+-- aparecer c?digos de productos repetidos en cualquier orden, y una base
+-- de datos con las caracter?sticas de cada producto produzca el correspondiente-- albar?n.
+{-
 mkAlbaran :: BD -> Compra -> Albaran
--- mkAlbaran bd cs = mkAlb bd (agrupar cs)
+mkAlbaran bd cs = mkAlb bd (agrupar cs)
 
 mkAlb bd [] = []
-mkAlb bd (c,n):cns) = (n, nom, pr) : mkAlb bd cns
+mkAlb bd ((c,n):cns) = (n, nom, pr) : mkAlb bd cns
 	where
 		(_, nom, pr) = producto c bd
 
@@ -59,10 +59,34 @@ mkAlbaran bd cs = foldr f [] (agrupar cs)
 		where 
 			f (c, n) rs = (n, nom, pr) : rs
 				where (_, nom, pr) = producto c bd
-
+-}
 {-
 Ejercicio 3
 
 -}
 
--- TODO
+-- Dada la siguiente definición de tipo
+
+data Problema a = Cal a | Sub [Problema a] deriving Show
+
+-- utilizado para representar los puntos correspondientes a los distintos
+-- apartados de un problema de examen.
+
+-- a) Define la función de plegado para el tipo Problema a
+
+foldProblema :: ([b] -> b) -> (a -> b) -> Problema a -> b
+foldProblema f g (Cal x) = g x
+foldProblema f g (Sub xs) = f (map (foldProblema f g) xs)
+
+-- b) Usando la función 'foldProblema', define una función 'notaTotal' que
+--		calcule la puntuación total de un examen.
+
+notaTotal :: Num a => Problema a -> a
+notaTotal = foldProblema sum (id)
+
+-- c) Usando la función 'foldProblema', define una función 'maximaNota' que
+--		devuelva la nota con mayor valoración de un exámen.
+
+maximaNota :: (Num a, Ord a) => Problema a -> a
+maximaNota = foldProblema maximum (id)
+
